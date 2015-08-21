@@ -1,20 +1,25 @@
 $.getScript('grid.js', function(){});
-$.getScript('veg.js', function(){});
+$.getScript('update.js', function(){});
 $.getScript('video_controls.js', function(){});
+$.getScript('veg.js', function(){});
+//$.getScript('rocks.js', function(){});
 
 var verbose = false;
-var maxH, max_t;
-var t = 0;
+var dt = 1;
+var vid_dt = 0; // video speed (inverse)
+var max_t;
+var dx = 15;
+var dy = dx;
+var maxH = 1;
+var MapColumns = 40,
+	MapRows = 30;
 
-var w = 960,
-    h = 500,
-    sz = 20,
-    dx = dy = sz,
-    r = sz / 2,
-    sr = r * r,
-    ssz = sz * sz,
-    S = 0.001;
+var S = 0.001;
+var g = 9.81;
+var Co = 0.01; // concentration of incoming flow, in decimal
 
+var Cd = 1.2;
+var porosity = 0.3;
 
 var rho = 1000;
 var rho_s = 2650;
@@ -22,36 +27,38 @@ var D = 0.0005;
 var tau_c = 0.047;
 var u_s = Math.sqrt(0.05/8);
 var R = (rho_s - rho) / rho;
-var Ke;
+var Ke = 12 * D * Math.sqrt(R * g * D);
 var nu = 0.000001;
 var vs = (R * g * D*D) / (18*nu - Math.pow((0.75*0.4 * g * R * D*D*D),2));
 var minh = tau_c * R * D / S;
-var dt = 0.25;
-var tv = 0;
-var sl = 0;
-var vid_dt = 0;
-var n = 0.03;
-    
-var g = 9.81;
-var Co = 0.005; // concentration of incoming flow, in decimal
-
-var Cd = 1.2;
-var porosity = 0.3;
 
 // Color schemes
-var greens = d3.scale.quantize().domain([1,7])
-.range(["#d9f0a3","#addd8e","#78c679","#41ab5d","#238443","#006837","#004529"]);
-var alpha = [0, 0.04, 0.1, 0.22, 0.4, 1];
+var greens = d3.scale.quantize().domain([1,3])
+.range(["#addd8e","#41ab5d","#006837"])
+var alpha = [0, 0.04, 0.4, 1];
 
 var browns = d3.scale.linear().domain([0,0.5])
 .range(["#fee391","#fec44f","#fe9929","#ec7014","#cc4c02","#993404","#662506"]);
 
-var sedColors = d3.scale.quantize().domain([-0.01,0.01])
-.range(["#9e0142","#d53e4f","#f46d43","#fdae61","#fee08b","#ffffbf","#e6f598","#abdda4","#66c2a5","#3288bd","#5e4fa2"]);
+var sedColors = d3.scale.linear().domain([-0.005,0.005])
+.range(["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"]);
 
 var blues = d3.scale.linear().domain([0,0.1])
 .range(["#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#08519c"]);
 
+
+var shots = [];
+var topo = [];
+var pts = [];
+var colors = [];
+var time = [];
+var node_links;
+var sed_links;
+var link_geometry;
+var link_sed;
+var t = 0;
+var tv = 0;
+var sl = 0;
 
 
 function retrieve() {
@@ -63,7 +70,11 @@ function retrieve() {
     
     var txtbox = document.getElementById("maxT");
     max_t = txtbox.value;
-
+    
+    
+    set_initial();
+//     geometry_fvm();
+    draw_initial();
     
     document.getElementById("maxH").disabled = true;
     document.getElementById("maxT").disabled = true;
@@ -75,61 +86,74 @@ function retrieve() {
     
 }
 
-var shots = [];
-var topo = [];
+
+
+var draw_initial = function() {
+
+	if (verbose) { console.log('draw_initial'); }
+
+	recolor();
+
+	path.transition().style("fill", function(d, i) { return colors[i]; });   
+    path2.transition().style("fill", function(d, i) { return elev[i]; });    
+
+}
+
 
 var recolor = function() {
 
+elev = [];
+
 	if (verbose) { console.log('recolor'); }
-	
+
 	colors = [];
 
-	svg.selectAll(".cell").each(function(d,i) {
-
-    if (d.veg == 0 & d.depth > minh) {colors.push(blues(d.depth+d.z));}
-    else if (d.veg == 0 & d.depth <= minh) {colors.push(browns(d.depth+d.z));}
-    else {colors.push(greens(d.veg))}})
+	for (var i=0; i<pts.length; i++){
 	
+		if (pts[i].depth > 0.01 & pts[i].veg == 0) {
+			colors.push(blues(pts[i].depth));
+			
+		} else if (pts[i].depth <= 0.01 & pts[i].veg == 0) {
+			colors.push(browns(pts[i].z));
+			
+
+		} else {
+			colors.push(greens(pts[i].veg));
+			
+		}
+		elev.push(sedColors(pts[i].z - initial_z[i]));
+	}	
+	
+// 	topo.push(elev);
+
 }
 
-var recolor_sed = function() {
 
-	if (verbose) { console.log('recolor_sed'); }
-	
-	colors_sed = [];
 
-	svg.selectAll(".cell").each(function(d,i) {
-
-    colors_sed.push(d.z - initial_z[i])
-    })
-	
-}
 
 var run_sim = function() {
 
 	if (verbose) { console.log('run_sim'); }
 	
-	svg.selectAll(".cell").each( function(d) {
-	if (d.veg>5) {d.veg = 5;}
-	})
+	for (var i=0; i<pts.length; i++){
+	if (pts[i].veg>3) {pts[i].veg = 3;}
+	}
 
 	shots.push(colors);
-	topo.push(colors_sed);
+	topo.push(elev);
+	// this is a shallow clone and won't work! need to either loop through the interior arrays or to create 1 level arrays (like colors) that can be copied every time
 	
 	document.getElementById("veg").innerHTML = "";
 	document.getElementById("running").innerHTML = " Running...";
-	var counter = 0;
 	
 	while (t < max_t) {
-		update();
+		update_fvm();
 		update_sed();		
         recolor();
-        recolor_sed();
-        counter++;
-		if (counter%5 ==0) {
+		if (t%5 ==0) {
 			shots.push(colors);
-			topo.push(colors_sed);
-		}
+			topo.push(elev);
+			}
 
 
 	}
@@ -142,5 +166,10 @@ var run_sim = function() {
 	document.getElementById("playvideo").disabled = false;
 	document.getElementById("noplant").disabled = true;
 	
+	svg.selectAll("path").on("mousedown", function(d,i) {});
+	svg.selectAll("path").on("mouseover", function(d,i) {});
+	svg.selectAll("path").on("mouseout", function(d,i) {});
 	
 }
+
+
