@@ -1,74 +1,66 @@
 <!DOCTYPE html>
 <html>
-  <head>
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-		<title>Self Organizing Maps</title>
-		
-		<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
-		<script type="text/javascript" src="http://d3js.org/d3.hexbin.v0.min.js"></script>	
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-
-
- 
-     <style type="text/css">
-/* 
-        circle {
-            stroke: #EFEDF5;
-            fill: #EFEDF5;
-            pointer-events: none;
-        }
-        line {
-            pointer-events: none;
-            stroke: #EFEDF5;
-            stroke-width: 1px;
-            opacity: 1;
-        }
- */
-/* 
-        path{
-            stroke: #EFEDF5;
-            stroke-width: 1px;
-        }
- */
-
-    </style>
-  
-
-	</head>
-	<body>
-	
-	Input parameters:<br>
-	Upstream flow depth (0.5 to 1.5 meters): <input type="text" name="maxH" id="maxH" value="0.5"/><br>
-	Run duration (below 200 seconds): <input type="text" name="maxT" id="maxT" value="200" />
-	<input type="button" autofocus id = "submit" name='submit' value='Set values' onclick="retrieve();"/><span id='values'> <- Set the model parameters here</span><br><br>
-	
-	Vegetation: 
-	<input type="button" id = "plant" value = 'Click to plant vegetation' onclick="vegetate();"/>
-	<input type="button" id = "noplant" value = 'Reset vegetation' disabled onclick="resetVeg();"/> <span id='veg'><- Optionally, add plants</span><br>
-<!-- 
-	Rocks: 
-	<input type="button" id = "rock" value = 'Place rocks' onclick="placeRocks();"/>
-	<input type="button" id = "norock" value = 'Remove all rocks' disabled onclick="resetRocks();"/> <span id='rock'><- or large rocks</span>
- -->
-	<br><br>
-	
-	
-	<input type="button" id = "startrun" name='start' value = 'Start run' disabled onclick="run_sim();"/><span id='running'></span>
-	
-	<br><br>
-	
-	
-	Animation controls:<br>
-	<input type="button" id = "playvideo" name='play' value = 'Play' disabled onclick="play();"/>
-	<input type="button" id = "stopvideo" name='stop' value = 'Pause' disabled onclick="pause();"/><span id='counter'></span><br>
-	<input type="button" id = "slower" value = 'Slower' disabled onclick="slower();"/>
-	<input type="button" id = "faster" value = 'Faster' disabled onclick="faster();"/>
-
+  <style>  
+    div {  
+      padding: 0px;
+      margin: 0px;
+    }  
+  </style>  
+</head> 
+<body>
+<h1>Wave moving down a ramp</h1>
+<hr>
+<h3>Elevation </h3>
+<img src="anuga/nopoles_elev.png">
+<hr>
+<h3>Depth </h3>
+<div style="text-align: left;">
+<video width="1070" height="288" controls>
+  <source src="anuga/nopoles_depth150ms.mp4" type="video/mp4">
+</video>
+</div>
+<hr>
+<h3>Concentration </h3>
+<div style="text-align: left;">
+<video width="1070" height="288" controls>
+  <source src="anuga/nopoles_concentration150ms.mp4" type="video/mp4">
+</video>
+</div>
+<hr>
+<h3>Elevation Change </h3>
+<div style="text-align: left;">
+<video width="1070" height="288" controls>
+  <source src="anuga/nopoles_diff150ms.mp4" type="video/mp4">
+</video>
+</div>
+<hr><hr>
 <br><br>
+<h1>Wave moving down a ramp, with poles</h1>
+<hr>
+<h3>Elevation </h3>
+<img src="anuga/poles_elev.png">
+<hr>
+<h3>Depth </h3>
+<div style="text-align: left;">
+<video width="1070" height="288" controls>
+  <source src="anuga/poles_depth150ms.mp4" type="video/mp4">
+</video>
+</div>
+<hr>
+<h3>Concentration </h3>
+<div style="text-align: left;">
+<video width="1070" height="288" controls>
+  <source src="anuga/poles_concentration150ms.mp4" type="video/mp4">
+</video>
+</div>
+<hr>
+<h3>Elevation Change </h3>
+<div style="text-align: left;">
+<video width="1070" height="288" controls>
+  <source src="anuga/poles_diff150ms.mp4" type="video/mp4">
+</video>
+</div>
+<hr>
 
-		<div id="chart"></div>
-		<div id="chart2"></div>
-		
-		<script type="text/javascript" src="scripts.js"></script>
-	</body>
+</body>
 </html>
