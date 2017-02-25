@@ -1,77 +1,59 @@
 <!DOCTYPE html>
 <html>
-  <style>  
-    div {  
-      padding: 0px;
-      margin: 0px;
-    }  
-  </style> 
-</head> 
-<body>
+  <head>
+    <!-- EXTERNAL LIBS-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://www.google.com/jsapi"></script>
 
-<!-- Redirecting to the <a href="http://mperignon.github.io/2016-05-16-csdms/">CSDMS Software Carpentry workshop website</a> -->
+    <!-- EXAMPLE SCRIPT -->
+    <script>
 
+      // onload callback
+      function drawChart() {
 
-<img src="sww_333.gif" alt="Run 333" width="800">
-<br><br>
-<img src="sww_313.gif" alt="Run 313" width="800">
+        var public_key = 'DJKAwYmaAwIXbAvOZWOz';
 
+        // JSONP request
+        var jsonData = $.ajax({
+          url: 'https://data.sparkfun.com/output/' + public_key + '.json',
+          data: {page: 1},
+          dataType: 'jsonp',
+        }).done(function (results) {
 
-<!-- 
-<h1>Wave moving down a ramp</h1>
-<hr>
-<h3>Elevation </h3>
-<img src="anuga/nopoles_elev.png">
-<hr>
-<h3>Depth </h3>
-<div style="text-align: left;">
-<video width="1070" height="288" controls>
-  <source src="anuga/nopoles_depth150ms.mp4" type="video/mp4">
-</video>
-</div>
-<hr>
-<h3>Concentration </h3>
-<div style="text-align: left;">
-<video width="1070" height="288" controls>
-  <source src="anuga/nopoles_concentration150ms.mp4" type="video/mp4">
-</video>
-</div>
-<hr>
-<h3>Elevation Change </h3>
-<div style="text-align: left;">
-<video width="1070" height="288" controls>
-  <source src="anuga/nopoles_diff150ms.mp4" type="video/mp4">
-</video>
-</div>
-<hr><hr>
-<br><br>
-<h1>Wave moving down a ramp, with poles</h1>
-<hr>
-<h3>Elevation </h3>
-<img src="anuga/poles_elev.png">
-<hr>
-<h3>Depth </h3>
-<div style="text-align: left;">
-<video width="1070" height="288" controls>
-  <source src="anuga/poles_depth150ms.mp4" type="video/mp4">
-</video>
-</div>
-<hr>
-<h3>Concentration </h3>
-<div style="text-align: left;">
-<video width="1070" height="288" controls>
-  <source src="anuga/poles_concentration150ms.mp4" type="video/mp4">
-</video>
-</div>
-<hr>
-<h3>Elevation Change </h3>
-<div style="text-align: left;">
-<video width="1070" height="288" controls>
-  <source src="anuga/poles_diff150ms.mp4" type="video/mp4">
-</video>
-</div>
-<hr>
- -->
+          var data = new google.visualization.DataTable();
 
-</body>
+          data.addColumn('datetime', 'Time');
+          data.addColumn('tempf', 'Temp');
+
+          $.each(results, function (i, row) {
+            data.addRow([
+              (new Date(row.timestamp)),
+              parseFloat(row.tempf),
+            ]);
+          });
+
+          var chart = new google.visualization.LineChart($('#chart').get(0));
+
+          chart.draw(data, {
+            title: 'Chicken brooder'
+          });
+
+        });
+
+      }
+
+      // load chart lib
+      google.load('visualization', '1', {
+        packages: ['corechart']
+      });
+
+      // call drawChart once google charts is loaded
+      google.setOnLoadCallback(drawChart);
+
+    </script>
+
+  </head>
+  <body>
+    <div id="chart" style="width: 100%;"></div>
+  </body>
 </html>
