@@ -9,13 +9,13 @@
     <script>
 
       // onload callback
-      function drawChart() {
+      function drawChart1() {
 
         var public_key = 'DJKAwYmaAwIXbAvOZWOz';
 
         // JSONP request
         var jsonData = $.ajax({
-          url: 'https://data.sparkfun.com/output/' + public_key + '.json',
+          url: 'https://data.sparkfun.com/output/' + public_key + '.json?eq[id]=2523',
           data: {page: 1},
           dataType: 'jsonp',
         }).done(function (results) {
@@ -23,19 +23,52 @@
           var data = new google.visualization.DataTable();
 
           data.addColumn('datetime', 'Time');
-          data.addColumn('tempf', 'Temp');
+          data.addColumn('number', 'Temp (F) on warm side');
 
           $.each(results, function (i, row) {
             data.addRow([
               (new Date(row.timestamp)),
-              parseFloat(row.tempf),
+              parseFloat(row.tempf)
             ]);
           });
 
-          var chart = new google.visualization.LineChart($('#chart').get(0));
+          var chart = new google.visualization.LineChart($('#chart1').get(0));
 
           chart.draw(data, {
-            title: 'Chicken brooder'
+            title: 'Temp 1'
+          });
+
+        });
+
+      }
+      
+    function drawChart2() {
+
+        var public_key = 'DJKAwYmaAwIXbAvOZWOz';
+
+        // JSONP request
+        var jsonData = $.ajax({
+          url: 'https://data.sparkfun.com/output/' + public_key + '.json?eq[id]=251A',
+          data: {page: 1},
+          dataType: 'jsonp',
+        }).done(function (results) {
+
+          var data = new google.visualization.DataTable();
+
+          data.addColumn('datetime', 'Time');
+          data.addColumn('number', 'Temp (F) on cold side');
+
+          $.each(results, function (i, row) {
+            data.addRow([
+              (new Date(row.timestamp)),
+              parseFloat(row.tempf)
+            ]);
+          });
+
+          var chart = new google.visualization.LineChart($('#chart2').get(0));
+
+          chart.draw(data, {
+            title: 'Temp 2'
           });
 
         });
@@ -48,14 +81,14 @@
       });
 
       // call drawChart once google charts is loaded
-      google.setOnLoadCallback(drawChart);
+      google.setOnLoadCallback(drawChart1);
+      google.setOnLoadCallback(drawChart2);
 
     </script>
 
   </head>
   <body>
-  <p> chart goes below </p>
-    <div id="chart" style="width: 100%;"></div>
-    <p> chart goes above </p>
+    <div id="chart1" style="width: 100%;"></div>
+    <div id="chart2" style="width: 100%;"></div>
   </body>
 </html>
