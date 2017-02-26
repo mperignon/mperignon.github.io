@@ -1,16 +1,136 @@
+<!DOCTYPE html>
 <html>
-<head>
-</head>
-<body>
+  <head>
+    <!-- EXTERNAL LIBS-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://www.google.com/jsapi"></script>
 
-   <div class="box">  
-   <iframe src="/redirect.php?url=http://chickencam.dlinkddns.com:8887/video.cgi"></iframe>
+    <!-- EXAMPLE SCRIPT -->
+    <script>
+
+      // onload callback
+      function drawChart1() {
+
+        var public_key = 'DJKAwYmaAwIXbAvOZWOz';
+
+        // JSONP request
+        var jsonData = $.ajax({
+          url: 'https://data.sparkfun.com/output/' + public_key + '.json?eq[id]=2523',
+          data: {page: 1},
+          dataType: 'jsonp',
+        }).done(function (results) {
+
+          var data = new google.visualization.DataTable();
+
+          data.addColumn('datetime', 'Time');
+          data.addColumn('number', 'Temp (F) on warm side');
+
+          $.each(results, function (i, row) {
+            data.addRow([
+              (new Date(row.timestamp)),
+              parseFloat(row.tempf)
+            ]);
+          });
+
+          var chart = new google.visualization.LineChart($('#chart1').get(0));
+
+          chart.draw(data, {
+            title: 'Temperature on warm side',
+            subtitle: 'in degrees Fahrenheit',
+            colors:['#7fcdbb'],
+            height: 150,
+            legend:{position:'none'}
+          });
+
+        });
+
+      }
+      
+    function drawChart2() {
+
+        var public_key = 'DJKAwYmaAwIXbAvOZWOz';
+
+        // JSONP request
+        var jsonData = $.ajax({
+          url: 'https://data.sparkfun.com/output/' + public_key + '.json?eq[id]=251A',
+          data: {page: 1},
+          dataType: 'jsonp',
+        }).done(function (results) {
+
+          var data = new google.visualization.DataTable();
+
+          data.addColumn('datetime', 'Time');
+          data.addColumn('number', 'Temp (F) on cold side');
+
+          $.each(results, function (i, row) {
+            data.addRow([
+              (new Date(row.timestamp)),
+              parseFloat(row.tempf)
+            ]);
+          });
+
+          var chart = new google.visualization.LineChart($('#chart2').get(0));
+            
+            
+            var options = {
+            title: 'Temperature on cold side',
+            subtitle: 'in degrees Fahrenheit',
+            colors:['#2c7fb8'],
+            height: 150,
+            legend:{position:'none'}
+          };
+
+          chart.draw(data, options);
+
+        });
+
+      }
+
+      // load chart lib
+      google.load('visualization', '1', {
+        packages: ['corechart']
+      });
+
+      // call drawChart once google charts is loaded
+      google.setOnLoadCallback(drawChart1);
+      google.setOnLoadCallback(drawChart2);
+
+    </script>
+
+<style type="text/css">
+
+#curtain {
+  line-height: 150px;
+  text-align: center;
+  background: #fff;
+  color: #d3d3d3;
+  font-size: 16px;
+}
+span {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+#chart1 {
+vertical-align: middle;
+width: 80%;
+height: 150px;
+}
+#chart2 {
+vertical-align: middle;
+width: 80%;
+height: 150px;
+}
+</style>
+
+  </head>
+  <body>
+    <div id="chart1">
+    <div id="curtain"><span>Chart is loading...</span></div>
     </div>
-
-
-</body>
-<HEAD>
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-<META HTTP-EQUIV="Expires" CONTENT="-1">
-</HEAD>
+    <br><br>
+    <div id="chart2">
+    <div id="curtain"><span>Chart is loading...</span></div>
+    </div>
+  </body>
 </html>
