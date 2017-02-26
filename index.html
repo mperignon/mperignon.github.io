@@ -1,94 +1,27 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <!-- EXTERNAL LIBS-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://www.google.com/jsapi"></script>
+<head>
+<title>LiveVideo</title>
+<META content="text/html"; charset="UTF-8"; http-equiv=Content-Type>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+</head>
+<body>
+LiveVideo by acellier, rev. 2012-08-06  1740
 
-    <!-- EXAMPLE SCRIPT -->
-    <script>
+<tr>
+   <div class="box">
+        <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>
+      <tr><td bgcolor=black > <font color=white> CameraName <BR></font> 
+      </td> </tr> </TABLE>   
+      <iframe src="http://192.168.0.19:80/mjpeg.cgi" 
+         width="640" height="480" class="smart_sizing_iframe noresize" frameborder="0" scrolling="no" > 
+      </iframe>
+    </div>
+</tr>
 
-      // onload callback
-      function drawChart1() {
-
-        var public_key = 'DJKAwYmaAwIXbAvOZWOz';
-
-        // JSONP request
-        var jsonData = $.ajax({
-          url: 'https://data.sparkfun.com/output/' + public_key + '.json?eq[id]=2523',
-          data: {page: 1},
-          dataType: 'jsonp',
-        }).done(function (results) {
-
-          var data = new google.visualization.DataTable();
-
-          data.addColumn('datetime', 'Time');
-          data.addColumn('number', 'Temp (F) on warm side');
-
-          $.each(results, function (i, row) {
-            data.addRow([
-              (new Date(row.timestamp)),
-              parseFloat(row.tempf)
-            ]);
-          });
-
-          var chart = new google.visualization.LineChart($('#chart1').get(0));
-
-          chart.draw(data, {
-            title: 'Temp 1'
-          });
-
-        });
-
-      }
-      
-    function drawChart2() {
-
-        var public_key = 'DJKAwYmaAwIXbAvOZWOz';
-
-        // JSONP request
-        var jsonData = $.ajax({
-          url: 'https://data.sparkfun.com/output/' + public_key + '.json?eq[id]=251A',
-          data: {page: 1},
-          dataType: 'jsonp',
-        }).done(function (results) {
-
-          var data = new google.visualization.DataTable();
-
-          data.addColumn('datetime', 'Time');
-          data.addColumn('number', 'Temp (F) on cold side');
-
-          $.each(results, function (i, row) {
-            data.addRow([
-              (new Date(row.timestamp)),
-              parseFloat(row.tempf)
-            ]);
-          });
-
-          var chart = new google.visualization.LineChart($('#chart2').get(0));
-
-          chart.draw(data, {
-            title: 'Temp 2'
-          });
-
-        });
-
-      }
-
-      // load chart lib
-      google.load('visualization', '1', {
-        packages: ['corechart']
-      });
-
-      // call drawChart once google charts is loaded
-      google.setOnLoadCallback(drawChart1);
-      google.setOnLoadCallback(drawChart2);
-
-    </script>
-
-  </head>
-  <body>
-    <div id="chart1" style="width: 100%;"></div>
-    <div id="chart2" style="width: 100%;"></div>
-  </body>
+</body>
+<HEAD>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+</HEAD>
 </html>
