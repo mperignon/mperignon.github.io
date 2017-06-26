@@ -11,11 +11,11 @@
       // onload callback
       function drawChart1() {
 
-        var public_key = 'DJKAwYmaAwIXbAvOZWOz';
+        var public_key = 'VpraLdAxb3S7ObZ8pYYm';
 
         // JSONP request
         var jsonData = $.ajax({
-          url: 'https://data.sparkfun.com/output/' + public_key + '.json?eq[id]=2523',
+          url: 'https://data.sparkfun.com/output/' + public_key + '.json?eq[id]=5',
           data: {page: 1},
           dataType: 'jsonp',
         }).done(function (results) {
@@ -27,7 +27,7 @@
 
           $.each(results, function (i, row) {
             data.addRow([
-              (new Date(row.timestamp)),
+              (new Date(row.time)),
               parseFloat(row.tempf)
             ]);
           });
