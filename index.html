@@ -11,7 +11,7 @@
 
       function drawChart1() {
       
-      var queryString = encodeURIComponent("SELECT A, E WHERE B CONTAINS '2523'  ORDER BY F DESC LIMIT 45");
+      var queryString = encodeURIComponent("SELECT A, E WHERE B CONTAINS '2523'  ORDER BY A DESC LIMIT 30");
 //       var queryString = encodeURIComponent("SELECT A, B, E ORDER BY A DESC LIMIT 45");
       
       var query = new google.visualization.Query(
@@ -82,7 +82,7 @@ function handleQueryResponse1(response) {
 
       function drawChart2() {
       
-      var queryString = encodeURIComponent("SELECT A, E WHERE B CONTAINS 'A' ORDER BY F DESC LIMIT 45");
+      var queryString = encodeURIComponent("SELECT A, E WHERE B CONTAINS 'A' ORDER BY A DESC LIMIT 30");
       
       var query = new google.visualization.Query(
       "https://docs.google.com/spreadsheets/d/1uHaBN_yEPqVsGOg4Y60AHnCzvwsmP44BsZXF--JkoEM/gviz/tq?gid=0&headers=1&tq=" + queryString
@@ -106,7 +106,7 @@ function handleQueryResponse2(response) {
           };
   chart.draw(data, options);
   
-  
+//   
 //   var table = new google.visualization.Table(document.getElementById('chart3'));
 // 
 //         table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
