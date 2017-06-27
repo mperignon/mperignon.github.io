@@ -11,7 +11,7 @@
 
       function drawChart1() {
       
-      var queryString = encodeURIComponent("SELECT A, E WHERE B CONTAINS '2523'  ORDER BY A DESC LIMIT 45");
+      var queryString = encodeURIComponent("SELECT A, E WHERE B CONTAINS '2523'  ORDER BY F DESC LIMIT 45");
 //       var queryString = encodeURIComponent("SELECT A, B, E ORDER BY A DESC LIMIT 45");
       
       var query = new google.visualization.Query(
@@ -60,10 +60,8 @@ function handleQueryResponse1(response) {
 // //   var data = google.visualization.data.join(view, view2, 'full',
 // //                                  [[0],[0]], [1], [1]);
 // //                                  
-// var table = new google.visualization.Table(document.getElementById('chart1'));
-// 
-//         table.draw(view2, {showRowNumber: true, width: '100%', height: '100%'});
-// 
+
+
 
   var chart = new google.visualization.LineChart(document.getElementById('chart1'));
   
@@ -84,7 +82,7 @@ function handleQueryResponse1(response) {
 
       function drawChart2() {
       
-      var queryString = encodeURIComponent("SELECT A, E WHERE B CONTAINS 'A' ORDER BY A DESC LIMIT 45");
+      var queryString = encodeURIComponent("SELECT A, E WHERE B CONTAINS 'A' ORDER BY F DESC LIMIT 45");
       
       var query = new google.visualization.Query(
       "https://docs.google.com/spreadsheets/d/1uHaBN_yEPqVsGOg4Y60AHnCzvwsmP44BsZXF--JkoEM/gviz/tq?gid=0&headers=1&tq=" + queryString
@@ -107,6 +105,11 @@ function handleQueryResponse2(response) {
             legend:{position:'none'}
           };
   chart.draw(data, options);
+  
+  
+  var table = new google.visualization.Table(document.getElementById('chart3'));
+
+        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
 
 }
 
@@ -147,6 +150,10 @@ height: 150px;
     <br><br>
     <div id="chart2">
     <span>Chart is loading...</span></div>
+    </div>
+    <br><br>
+    <div id="chart3">
+    <span>Table is loading...</span></div>
     </div>
   </body>
 </html>
